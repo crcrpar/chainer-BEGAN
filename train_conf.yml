@@ -8,3 +8,4 @@ n: 16
 h: 100
 resume: ''
 epoch: 100
+dataset: 'celebA'
