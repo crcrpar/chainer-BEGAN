@@ -8,7 +8,7 @@ class Encoder(chainer.Chain):
     """ Encoder for BEGAN
 
     Input image size should be (64, 64, 3).
-    This implementation uses `F.avaerage_pooling_2d` as `subsampling`
+    This implementation uses `F.average_pooling_2d` as `subsampling`
     """
 
     def __init__(self, n, h_dim):
@@ -16,7 +16,7 @@ class Encoder(chainer.Chain):
         args = {
                 'ksize': 3,
                 'stride': 1,
-                'padding': 4,
+                'pad': 2,
                 'initialW': chainer.initializers.HeNormal()
                 }
         self._layers = { 
@@ -40,19 +40,18 @@ class Encoder(chainer.Chain):
         if not isinstance(x, chainer.Variable):
             x = chainer.Variable(x)
         h0 = F.elu(self.conv_0(x))
-        h0_ss = F.avaerage_pooling_2d(h0, 2)
+        h0_ss = F.average_pooling_2d(h0, 2)
         h1 = F.elu(self.conv_1(h0_ss))
         h2 = F.elu(self.conv_2(h1))
-        h2_ss = F.avaerage_pooling_2d(h2, 2)
+        h2_ss = F.average_pooling_2d(h2, 2)
         h3 = F.elu(self.conv_3(h2_ss))
         h4 = F.elu(self.conv_4(h3))
-        h4_ss = F.avaerage_pooling_2d(h4, 2)
+        h4_ss = F.average_pooling_2d(h4, 2)
         h5 = F.elu(self.conv_5(h4_ss))
         h6 = F.elu(self.conv_6(h5))
-        h6_ss = F.avaerage_pooling_2d(h6, 2)
+        h6_ss = F.average_pooling_2d(h6, 2)
         h7 = F.elu(self.conv_7(h6_ss))
         h8 = F.elu(self.conv_8(h7))
-        # h8_flatten = F.reshape(h8, (-1, 8 * 8 * 4 * n))
         embedded = self.fc(h8)
         return embedded
 
@@ -63,3 +62,14 @@ class Encoder(chainer.Chain):
     @property
     def change_mode(self, train):
         self._train = train
+
+
+if __name__ == '__main__':
+    import numpy as np
+    bs = 100
+    print('# batch size: {}'.format(bs))
+    encoder = Encoder(16, 100)
+    shape = (bs, 3, 64, 64)
+    x = np.random.normal(size=shape).astype(np.float32)
+    out = encoder(x)
+    print('# out.shape: {}'.format(out.shape))
