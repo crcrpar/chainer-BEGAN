@@ -1,0 +1,10 @@
+gpu: 0
+snapshot_interval: 1000
+display_interval: 100
+out: 'result'
+batchsize: 64
+parallel: True
+n: 16
+h: 100
+resume: ''
+epoch: 100
