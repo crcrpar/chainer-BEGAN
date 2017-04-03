@@ -8,8 +8,8 @@ import chainer
 from chainer import training
 from chainer.training import extensions
 
-from models import Encoder
-from models import Decoder
+from models.encoder import Encoder
+from models.decoder import Decoder
 from updater import BEGANUpdater
 import utils
 
