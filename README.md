@@ -13,8 +13,8 @@ image_files = os.listdir('conf['dataset'])
 dataset = chainer.datasets.ImageDataset(image_files, conf['dataset'])
 ```
 
+and in [`L13 in train_conf.yml`](https://github.com/crcrpar/chainer-BEGAN/blob/master/train_began.py#L32)
+
 ```train_conf.yaml
-(...)
 dataset: 'path/to/celebA_dataset'
-(...)
 ```
