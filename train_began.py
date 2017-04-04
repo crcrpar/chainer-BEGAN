@@ -8,8 +8,7 @@ import chainer
 from chainer import training
 from chainer.training import extensions
 
-from models.encoder import Encoder
-from models.decoder import Decoder
+import models
 from updater import BEGANUpdater
 import utils
 
@@ -20,16 +19,16 @@ def main():
     print('# training config')
     print(json.dumps(conf, indent=2))
 
-    enc = Encoder(conf['n'], conf['h'])
-    dec = Decoder(conf['n'])
+    generator = models.Decoder(conf['n'])
+    discriminator = models.AutoEncoder(conf['n'], conf['h'])
     if conf['gpu'] >= 0:
         chainer.cuda.get_device(conf['gpu']).use()
-        enc.to_gpu()
-        dec.to_gpu()
-    opt_enc = chainer.optimizers.Adam()
-    opt_enc.setup(enc)
-    opt_dec = chainer.optimizers.Adam()
-    opt_dec.setup(dec)
+        generator.to_gpu()
+        discriminator.to_gpu()
+    opt_gen = chainer.optimizers.Adam()
+    opt_gen.setup(generator)
+    opt_dis = chainer.optimizers.Adam()
+    opt_dis.setup(discriminator)
 
     dataset = utils.get_dataset(conf['dataset'])
     if conf['parallel']:
@@ -37,10 +36,12 @@ def main():
     else:
         train_iter = chainer.iterators.SerialIterator(dataset, conf['bastchsize'])
     updater = BEGANUpdater(
-        models=(enc, dec),
+        models=(generator, discriminator),
+        Lambda=conf['lambda'],
+        gamma=conf['gamma'],
         iterator=train_iter,
         optimizers={
-            'enc': opt_enc, 'gen': opt_gen},
+            'opt_gen': opt_gen, 'opt_dis': opt_dis},
         device=conf['gpu'])
     trainer = training.Trainer(updater, (conf['epoch'], 'epoch'), out=conf['out'])
     snapshot_interval = (conf['snapshot_interval'], 'iteration')
@@ -49,12 +50,12 @@ def main():
         extensions.snapshot(filename='snapshot_iter_{.updater.iteration}.npz'),
         trigger=snapshot_interval)
     trainer.extend(extensions.snapshot_object(
-        dec, 'decoder_iter_{.updater.iteration}.npz'), trigger=snapshot_interval)
+        generator, 'generator_iter_{.updater.iteration}.npz'), trigger=snapshot_interval)
     trainer.extend(extensions.snapshot_object(
-        enc, 'encoder_iter_{.updater.iteration}.npz'), trigger=snapshot_interval)
+        discriminator, 'discriminator_iter_{.updater.iteration}.npz'), trigger=snapshot_interval)
     trainer.extend(extensions.LogReport(trigger=display_interval))
     trainer.extend(extensions.PrintReport([
-        'epoch', 'iteration', 'dec/loss', 'enc/loss',]),
+        'epoch', 'iteration', 'dis/loss', 'gen/loss', 'convergence', ]),
         trigger=display_interval)
     trainer.extend(extensions.ProgressBar(update_interval=10))
     if conf['resume']:
