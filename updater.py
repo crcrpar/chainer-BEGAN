@@ -1,6 +1,10 @@
-
+import numpy as np
 import chainer
 import chainer.functions as F
+
+
+def make_hidden(batchsize, h_dim):
+    return np.random.uniform(-1, 1, (batchsize, h_dim)).astype(np.float32)
 
 
 class BEGANUpdater(chainer.training.StandardUpdater):
@@ -33,7 +37,7 @@ class BEGANUpdater(chainer.training.StandardUpdater):
         reconstruction_loss_real = F.mean_absolute_error(out_real, x)
 
         # calculate loss for fake data
-        z = chainer.Variable(xp.asarray(gen.make_hidden(batchsize)))
+        z = chainer.Variable(xp.asarray(make_hidden(batchsize, dis.h_dim)))
         x_fake = gen(z)
         out_fake = dis(x_fake)
         reconstruction_loss_fake = F.mean_absolute_error(out_fake, x_fake)
