@@ -29,6 +29,13 @@ def main():
     opt_dis = chainer.optimizers.Adam()
     opt_dis.setup(discriminator)
 
+    # [NOTE]
+    # The code below is not correct.
+    # You have to define path/to/celebA-dataset in `train_conf.yml` and
+    # make list of `path/to/image_file`(relative path from conf['dataset']),
+    # then initialize dataset like this:
+    # `dataset = \
+    #       chainer.datasets.ImageDataset(image_file_list, conf['dataset'])`
     dataset = utils.get_dataset(conf['dataset'])
     if conf['parallel']:
         train_iter = chainer.iterators.MultiprocessIterator(dataset, conf['bastchsize'])
