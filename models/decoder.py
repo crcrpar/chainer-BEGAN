@@ -13,7 +13,7 @@ class Decoder(chainer.Chain):
     def __init__(self, n):
         self._train = True
         self.n = n
-        args = {
+        kwargs = {
                 'ksize': 3,
                 'stride': 1,
                 'pad': 1,
@@ -22,8 +22,8 @@ class Decoder(chainer.Chain):
         self._layers = dict()
         self._layers['fc'] = L.Linear(None, 8 * 8 * n)
         for i in range(1, 9):
-            self._layers['conv_{}'.format(i)] = L.Convolution2D(self.n, self.n, **args)
-        self._layers['conv_9'] = L.Convolution2D(self.n, 3, **args)
+            self._layers['conv_{}'.format(i)] = L.Convolution2D(self.n, self.n, **kwargs)
+        self._layers['conv_9'] = L.Convolution2D(self.n, 3, **kwargs)
         super(Decoder, self).__init__(**self._layers)
 
     def __call__(self, h):
@@ -64,8 +64,8 @@ class Decoder(chainer.Chain):
         h8 = F.elu(self.conv_8(h7))
         out = self.conv_9(h8)
         print(fv.shape, h1.shape, h2.shape, h2_us.shape, h3.shape,
-        h4.shape, h4_us.shape, h5.shape, h6.shape, h6_us.shape, h7.shape, h8.shape,
-        out.shape)
+                h4.shape, h4_us.shape, h5.shape, h6.shape, h6_us.shape,
+                h7.shape, h8.shape, out.shape)
 
 
 if __name__ == '__main__':

@@ -13,22 +13,22 @@ class Encoder(chainer.Chain):
 
     def __init__(self, n, h_dim):
         self._train = True
-        args = {
+        kwargs = {
                 'ksize': 3,
                 'stride': 1,
                 'pad': 1,
                 'initialW': chainer.initializers.HeNormal()
                 }
         self._layers = {
-                'conv_0': L.Convolution2D(3, n, **args),
-                'conv_1': L.Convolution2D(n, n, **args),
-                'conv_2': L.Convolution2D(n, 2 * n, **args),
-                'conv_3': L.Convolution2D(2 * n, 2 * n, **args),
-                'conv_4': L.Convolution2D(2 * n, 3 * n, **args),
-                'conv_5': L.Convolution2D(3 * n, 3 * n, **args),
-                'conv_6': L.Convolution2D(3 * n, 4 * n, **args),
-                'conv_7': L.Convolution2D(4 * n, 4 * n, **args),
-                'conv_8': L.Convolution2D(4 * n, 4 * n, **args),
+                'conv_0': L.Convolution2D(3, n, **kwargs),
+                'conv_1': L.Convolution2D(n, n, **kwargs),
+                'conv_2': L.Convolution2D(n, 2 * n, **kwargs),
+                'conv_3': L.Convolution2D(2 * n, 2 * n, **kwargs),
+                'conv_4': L.Convolution2D(2 * n, 3 * n, **kwargs),
+                'conv_5': L.Convolution2D(3 * n, 3 * n, **kwargs),
+                'conv_6': L.Convolution2D(3 * n, 4 * n, **kwargs),
+                'conv_7': L.Convolution2D(4 * n, 4 * n, **kwargs),
+                'conv_8': L.Convolution2D(4 * n, 4 * n, **kwargs),
                 'fc': L.Linear(None, h_dim)
                 }
         super(Encoder, self).__init__(**self._layers)
@@ -73,8 +73,8 @@ class Encoder(chainer.Chain):
         h8 = F.elu(self.conv_8(h7))
         embedded = self.fc(h8)
         print(h0.shape, h0_ss.shape, h1.shape, h2.shape, h2_ss.shape,
-        h3.shape, h4.shape, h4_ss.shape, h5.shape, h6.shape, h6_ss.shape,
-        h7.shape, h8.shape)
+                h3.shape, h4.shape, h4_ss.shape, h5.shape, h6.shape,
+                h6_ss.shape, h7.shape, h8.shape, embedded.shape)
 
     @property
     def train(self):
