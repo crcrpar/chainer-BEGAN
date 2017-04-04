@@ -52,7 +52,9 @@ class BEGANUpdater(chainer.training.StandardUpdater):
         opt_dis.update()
 
         # calculate convergence measure
-        m_global = reconstruction_loss_real + F.mean_absolute_error(self._gamma * reconstruction_loss_real, reconstruction_loss_fake)
+        m_global = reconstruction_loss_real + \
+            F.mean_absolute_error(
+                self._gamma * reconstruction_loss_real, reconstruction_loss_fake)
 
         chainer.report({
             'gen/loss': loss_G,
@@ -67,7 +69,8 @@ class BEGANUpdater(chainer.training.StandardUpdater):
 
     def clear_loss(self):
         if self.epoch > 0:
-            self.k_t += self._lambda * (self.gamma * self._sum_loss_D - self._sum_loss_D)
+            self.k_t += self._lambda * (self.gamma *
+                                        self._sum_loss_D - self._sum_loss_D)
         else:
             self.k_t = 0.0
         self._sum_loss_D = .0
