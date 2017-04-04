@@ -2,10 +2,12 @@ gpu: 0
 snapshot_interval: 1000
 display_interval: 100
 out: 'result'
-batchsize: 64
+batchsize: 16
 parallel: True
 n: 16
 h: 100
+lambda: 0.001
+gamma: 0.5
 resume: ''
 epoch: 100
 dataset: 'celebA'
