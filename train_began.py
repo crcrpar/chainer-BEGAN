@@ -34,6 +34,7 @@ def main():
     # You have to define path/to/celebA-dataset in `train_conf.yml` and
     # make list of `path/to/image_file`(relative path from conf['dataset']),
     # then initialize dataset like this:
+    # image_file_list = os.listdir(conf['dataset'])
     # `dataset = \
     #       chainer.datasets.ImageDataset(image_file_list, conf['dataset'])`
     dataset = utils.get_dataset(conf['dataset'])
